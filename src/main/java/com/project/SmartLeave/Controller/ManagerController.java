@@ -32,4 +32,13 @@ public class ManagerController {
                 id,
                 request.getRemarks());
     }
+    @PutMapping("/reject/{id}")
+    public String rejectLeave(
+            @PathVariable Long id,
+            @RequestBody ManagerRemarkRequest request) {
+
+        return managerService.rejectLeave(
+                id,
+                request.getRemarks());
+    }
 }

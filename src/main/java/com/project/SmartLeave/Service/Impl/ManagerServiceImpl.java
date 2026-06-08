@@ -57,4 +57,31 @@ import java.util.List;
 
             return "Leave Approved Successfully";
         }
+        @Override
+        public String rejectLeave(Long leaveId,
+                                   String remarks) {
+
+            LeaveRequest leave =
+                    leaveRequestRepository
+                            .findById(leaveId)
+                            .orElseThrow(() ->
+                                    new RuntimeException(
+                                            "Leave not found"));
+
+            if(leave.getStatus() != LeaveStatus.PENDING) {
+
+                return "Leave already processed";
+            }
+
+            leave.setStatus(
+                    LeaveStatus.REJECTED);
+
+            leave.setManagerRemarks(
+                    remarks);
+
+            leaveRequestRepository.save(
+                    leave);
+
+            return "Leave Rejected Successfully";
+        }
     }
