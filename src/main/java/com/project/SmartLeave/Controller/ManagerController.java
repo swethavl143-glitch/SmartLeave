@@ -2,6 +2,7 @@ package com.project.SmartLeave.Controller;
 
 import com.project.SmartLeave.Entity.LeaveRequest;
 import com.project.SmartLeave.Service.ManagerService;
+import com.project.SmartLeave.dto.ManagerRemarkRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,5 +22,14 @@ public class ManagerController {
     public List<LeaveRequest> getPendingLeaves() {
 
         return managerService.getPendingLeaves();
+    }
+    @PutMapping("/approve/{id}")
+    public String approveLeave(
+            @PathVariable Long id,
+            @RequestBody ManagerRemarkRequest request) {
+
+        return managerService.approveLeave(
+                id,
+                request.getRemarks());
     }
 }

@@ -30,4 +30,31 @@ import java.util.List;
                             LeaveStatus.PENDING
                     );
         }
+        @Override
+        public String approveLeave(Long leaveId,
+                                   String remarks) {
+
+            LeaveRequest leave =
+                    leaveRequestRepository
+                            .findById(leaveId)
+                            .orElseThrow(() ->
+                                    new RuntimeException(
+                                            "Leave not found"));
+
+            if(leave.getStatus() != LeaveStatus.PENDING) {
+
+                return "Leave already processed";
+            }
+
+            leave.setStatus(
+                    LeaveStatus.APPROVED);
+
+            leave.setManagerRemarks(
+                    remarks);
+
+            leaveRequestRepository.save(
+                    leave);
+
+            return "Leave Approved Successfully";
+        }
     }
