@@ -74,4 +74,36 @@ public class LeaveServiceImpl
         return leaveRequestRepository
                 .findByEmployee(employee);
     }
+    @Override
+    public String cancelLeave(Long leaveId,
+                              String email) {
+
+        LeaveRequest leave =
+                leaveRequestRepository
+                        .findById(leaveId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Leave not found"));
+
+        // Verify ownership
+        if (!leave.getEmployee()
+                .getEmail()
+                .equals(email)) {
+
+            return "You cannot cancel another employee's leave";
+        }
+
+        // Verify status
+        if (leave.getStatus() != LeaveStatus.PENDING) {
+
+            return "Only pending leave can be cancelled";
+        }
+
+        leave.setStatus(
+                LeaveStatus.CANCELLED);
+
+        leaveRequestRepository.save(leave);
+
+        return "Leave Cancelled Successfully";
+    }
 }

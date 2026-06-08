@@ -1,5 +1,6 @@
 package com.project.SmartLeave.Controller;
-
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import com.project.SmartLeave.Entity.LeaveRequest;
 import com.project.SmartLeave.Service.LeaveService;
 import com.project.SmartLeave.dto.ApplyLeaveRequest;
@@ -39,5 +40,14 @@ public class LeaveController {
         String email = authentication.getName();
 
         return leaveService.getMyLeaves(email);
+    }
+    @PutMapping("/cancel/{id}")
+    public String cancelLeave(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        return leaveService.cancelLeave(
+                id,
+                authentication.getName());
     }
 }

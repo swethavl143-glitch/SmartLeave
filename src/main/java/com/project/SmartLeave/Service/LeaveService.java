@@ -12,4 +12,7 @@ public interface LeaveService {
             String email
     );
     List<LeaveRequest> getMyLeaves(String email);
+    String cancelLeave(Long leaveId,
+                       String email);
+
 }
