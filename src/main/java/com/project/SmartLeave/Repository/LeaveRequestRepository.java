@@ -13,4 +13,5 @@ public interface LeaveRequestRepository
     List<LeaveRequest> findByEmployee(User employee);
     List<LeaveRequest>
     findByStatus(LeaveStatus status);
+    long countByStatus(LeaveStatus status);
 }

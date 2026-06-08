@@ -1,6 +1,7 @@
 package com.project.SmartLeave.Controller;
 import com.project.SmartLeave.Entity.User;
 import com.project.SmartLeave.Service.AdminService;
+import com.project.SmartLeave.dto.DashboardResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,5 +22,10 @@ public class AdminController {
     @GetMapping("/users")
     public List<User> getAllUsers() {
         return adminService.getAllUsers();
+    }
+    @GetMapping("/dashboard")
+    public DashboardResponse getDashboard() {
+
+        return adminService.getDashboard();
     }
 }
