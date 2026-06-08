@@ -1,5 +1,5 @@
 package com.project.SmartLeave.Entity;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
@@ -17,7 +17,7 @@ public class User {
     @Column(unique = true)
     @Email
     private String email;
-
+    @JsonIgnore
     private String password;
 
     @Enumerated(EnumType.STRING)

@@ -41,6 +41,15 @@ public class SecurityConfig {
                                 "/auth/login"
                         ).permitAll()
 
+                        .requestMatchers("/leave/**")
+                        .hasRole("EMPLOYEE")
+
+                        .requestMatchers("/manager/**")
+                        .hasRole("MANAGER")
+
+                        .requestMatchers("/admin/**")
+                        .hasRole("ADMIN")
+
                         .anyRequest()
                         .authenticated()
                 )
