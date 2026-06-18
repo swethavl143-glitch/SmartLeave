@@ -7,6 +7,9 @@ import com.project.SmartLeave.Repository.LeaveRequestRepository;
 import com.project.SmartLeave.Repository.UserRepository;
 import com.project.SmartLeave.Service.LeaveService;
 import com.project.SmartLeave.dto.ApplyLeaveRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -64,15 +67,20 @@ public class LeaveServiceImpl
         return "Leave Applied Successfully";
     }
     @Override
-    public List<LeaveRequest> getMyLeaves(String email) {
+    public Page<LeaveRequest> getMyLeaves(
+            String email,
+            int page,
+            int size) {
 
         User employee = userRepository
                 .findByEmail(email)
                 .orElseThrow(() ->
                         new RuntimeException("User not found"));
 
+        Pageable pageable = PageRequest.of(page, size);
+
         return leaveRequestRepository
-                .findByEmployee(employee);
+                .findByEmployee(employee, pageable);
     }
     @Override
     public String cancelLeave(Long leaveId,
@@ -105,5 +113,26 @@ public class LeaveServiceImpl
         leaveRequestRepository.save(leave);
 
         return "Leave Cancelled Successfully";
+    }
+    @Override
+    public Page<LeaveRequest> getMyLeavesByStatus(
+            String email,
+            LeaveStatus status,
+            int page,
+            int size) {
+
+        User employee = userRepository
+                .findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
+
+        Pageable pageable =
+                PageRequest.of(page, size);
+
+        return leaveRequestRepository
+                .findByEmployeeAndStatus(
+                        employee,
+                        status,
+                        pageable);
     }
 }

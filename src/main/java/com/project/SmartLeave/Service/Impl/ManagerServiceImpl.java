@@ -1,7 +1,9 @@
 package com.project.SmartLeave.Service.Impl;
 
+import com.project.SmartLeave.Entity.LeaveBalance;
 import com.project.SmartLeave.Entity.LeaveRequest;
 import com.project.SmartLeave.Entity.LeaveStatus;
+import com.project.SmartLeave.Repository.LeaveBalanceRepository;
 import com.project.SmartLeave.Repository.LeaveRequestRepository;
 import com.project.SmartLeave.Service.ManagerService;
 import org.springframework.stereotype.Service;
@@ -14,12 +16,18 @@ import java.util.List;
 
         private final LeaveRequestRepository
                 leaveRequestRepository;
+        private final LeaveBalanceRepository
+                leaveBalanceRepository;
 
         public ManagerServiceImpl(
-                LeaveRequestRepository leaveRequestRepository) {
+                LeaveRequestRepository leaveRequestRepository,
+                LeaveBalanceRepository leaveBalanceRepository) {
+
 
             this.leaveRequestRepository =
                     leaveRequestRepository;
+            this.leaveBalanceRepository =
+                    leaveBalanceRepository;
         }
 
         @Override
@@ -41,19 +49,71 @@ import java.util.List;
                                     new RuntimeException(
                                             "Leave not found"));
 
-            if(leave.getStatus() != LeaveStatus.PENDING) {
-
+            if (leave.getStatus() != LeaveStatus.PENDING) {
                 return "Leave already processed";
             }
 
-            leave.setStatus(
-                    LeaveStatus.APPROVED);
+            LeaveBalance balance =
+                    leaveBalanceRepository
+                            .findByUser(
+                                    leave.getEmployee())
+                            .orElseThrow(() ->
+                                    new RuntimeException(
+                                            "Leave balance not found"));
 
-            leave.setManagerRemarks(
-                    remarks);
+            long days =
+                    leave.getEndDate()
+                            .toEpochDay()
+                            -
+                            leave.getStartDate()
+                                    .toEpochDay()
+                            + 1;
 
-            leaveRequestRepository.save(
-                    leave);
+            switch (leave.getLeaveType()) {
+
+                case CASUAL:
+
+                    if(balance.getCasualBalance() < days){
+                        return "Insufficient Casual Leave Balance";
+                    }
+
+                    balance.setCasualBalance(
+                            balance.getCasualBalance()
+                                    - (int)days);
+
+                    break;
+
+                case SICK:
+
+                    if(balance.getSickBalance() < days){
+                        return "Insufficient Sick Leave Balance";
+                    }
+
+                    balance.setSickBalance(
+                            balance.getSickBalance()
+                                    - (int)days);
+
+                    break;
+
+                case EARNED:
+
+                    if(balance.getEarnedBalance() < days){
+                        return "Insufficient Earned Leave Balance";
+                    }
+
+                    balance.setEarnedBalance(
+                            balance.getEarnedBalance()
+                                    - (int)days);
+
+                    break;
+            }
+
+            leaveBalanceRepository.save(balance);
+
+            leave.setStatus(LeaveStatus.APPROVED);
+            leave.setManagerRemarks(remarks);
+
+            leaveRequestRepository.save(leave);
 
             return "Leave Approved Successfully";
         }

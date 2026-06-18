@@ -9,6 +9,17 @@ public class LeaveRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    public LeaveType getLeaveType() {
+        return leaveType;
+    }
+
+    public void setLeaveType(LeaveType leaveType) {
+        this.leaveType = leaveType;
+    }
+
+    @Enumerated(EnumType.STRING)
+    private LeaveType leaveType;
     private LocalDate appliedDate;
     private String managerRemarks;
     private LocalDate startDate;
