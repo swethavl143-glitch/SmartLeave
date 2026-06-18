@@ -5,6 +5,7 @@ import com.project.SmartLeave.Entity.LeaveStatus;
 import com.project.SmartLeave.Entity.User;
 import com.project.SmartLeave.Repository.LeaveRequestRepository;
 import com.project.SmartLeave.Repository.UserRepository;
+import com.project.SmartLeave.Service.EmailService;
 import com.project.SmartLeave.Service.LeaveService;
 import com.project.SmartLeave.dto.ApplyLeaveRequest;
 import org.springframework.data.domain.Page;
@@ -21,13 +22,16 @@ public class LeaveServiceImpl
 
     private final LeaveRequestRepository leaveRequestRepository;
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
     public LeaveServiceImpl(
             LeaveRequestRepository leaveRequestRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            EmailService emailService) {
 
         this.leaveRequestRepository = leaveRequestRepository;
         this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     @Override
@@ -52,8 +56,12 @@ public class LeaveServiceImpl
         leaveRequest.setReason(
                 request.getReason());
 
+        leaveRequest.setLeaveType(
+                request.getLeaveType());
+
         leaveRequest.setAppliedDate(
                 LocalDate.now());
+
 
         leaveRequest.setStatus(
                 LeaveStatus.PENDING);
@@ -63,6 +71,10 @@ public class LeaveServiceImpl
 
         leaveRequestRepository.save(
                 leaveRequest);
+        emailService.sendEmail(
+                employee.getEmail(),
+                "Leave Application Submitted",
+                "Your leave request has been submitted successfully.");
 
         return "Leave Applied Successfully";
     }

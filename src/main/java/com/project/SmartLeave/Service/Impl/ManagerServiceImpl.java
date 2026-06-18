@@ -5,6 +5,7 @@ import com.project.SmartLeave.Entity.LeaveRequest;
 import com.project.SmartLeave.Entity.LeaveStatus;
 import com.project.SmartLeave.Repository.LeaveBalanceRepository;
 import com.project.SmartLeave.Repository.LeaveRequestRepository;
+import com.project.SmartLeave.Service.EmailService;
 import com.project.SmartLeave.Service.ManagerService;
 import org.springframework.stereotype.Service;
 
@@ -18,16 +19,19 @@ import java.util.List;
                 leaveRequestRepository;
         private final LeaveBalanceRepository
                 leaveBalanceRepository;
+        private final EmailService emailService;
 
         public ManagerServiceImpl(
                 LeaveRequestRepository leaveRequestRepository,
-                LeaveBalanceRepository leaveBalanceRepository) {
+                LeaveBalanceRepository leaveBalanceRepository,
+                EmailService emailService) {
 
 
             this.leaveRequestRepository =
                     leaveRequestRepository;
             this.leaveBalanceRepository =
                     leaveBalanceRepository;
+            this.emailService=emailService;
         }
 
         @Override
@@ -114,6 +118,10 @@ import java.util.List;
             leave.setManagerRemarks(remarks);
 
             leaveRequestRepository.save(leave);
+            emailService.sendEmail(
+                    leave.getEmployee().getEmail(),
+                    "Leave Approved",
+                    "Your leave request has been approved.");
 
             return "Leave Approved Successfully";
         }
@@ -141,6 +149,11 @@ import java.util.List;
 
             leaveRequestRepository.save(
                     leave);
+            emailService.sendEmail(
+                    leave.getEmployee().getEmail(),
+                    "Leave Rejected",
+                    "Your leave request has been rejected.\nRemarks: "
+                            + remarks);
 
             return "Leave Rejected Successfully";
         }
