@@ -7,8 +7,10 @@ import com.project.SmartLeave.Repository.LeaveBalanceRepository;
 import com.project.SmartLeave.Repository.LeaveRequestRepository;
 import com.project.SmartLeave.Service.EmailService;
 import com.project.SmartLeave.Service.ManagerService;
+import com.project.SmartLeave.dto.PendingLeaveResponse;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
     @Service
@@ -35,12 +37,52 @@ import java.util.List;
         }
 
         @Override
-        public List<LeaveRequest> getPendingLeaves() {
+        public List<PendingLeaveResponse> getPendingLeaves() {
 
-            return leaveRequestRepository
-                    .findByStatus(
-                            LeaveStatus.PENDING
-                    );
+            List<LeaveRequest> leaves =
+                    leaveRequestRepository.findByStatus(
+                            LeaveStatus.PENDING);
+
+            List<PendingLeaveResponse> response =
+                    new ArrayList<>();
+
+            for (LeaveRequest leave : leaves) {
+
+                PendingLeaveResponse dto =
+                        new PendingLeaveResponse();
+
+                dto.setId(leave.getId());
+
+                dto.setEmployeeName(
+                        leave.getEmployee() != null
+                                ? leave.getEmployee().getName()
+                                : "N/A"
+                );
+
+                dto.setLeaveType(
+                        leave.getLeaveType()
+                );
+
+                dto.setStartDate(
+                        leave.getStartDate()
+                );
+
+                dto.setEndDate(
+                        leave.getEndDate()
+                );
+
+                dto.setReason(
+                        leave.getReason()
+                );
+
+                dto.setStatus(
+                        leave.getStatus()
+                );
+
+                response.add(dto);
+            }
+
+            return response;
         }
         @Override
         public String approveLeave(Long leaveId,
@@ -156,5 +198,56 @@ import java.util.List;
                             + remarks);
 
             return "Leave Rejected Successfully";
+        }
+        @Override
+        public List<PendingLeaveResponse> getHistory() {
+
+            List<LeaveRequest> leaves =
+                    leaveRequestRepository.findByStatusIn(
+                            List.of(
+                                    LeaveStatus.APPROVED,
+                                    LeaveStatus.REJECTED
+                            )
+                    );
+
+            return leaves.stream()
+                    .map(leave -> {
+
+                        PendingLeaveResponse dto =
+                                new PendingLeaveResponse();
+
+                        dto.setId(leave.getId());
+
+                        dto.setEmployeeName(
+                                leave.getEmployee().getName()
+                        );
+
+                        dto.setLeaveType(
+                                leave.getLeaveType()
+                        );
+
+                        dto.setStartDate(
+                                leave.getStartDate()
+                        );
+
+                        dto.setEndDate(
+                                leave.getEndDate()
+                        );
+
+                        dto.setReason(
+                                leave.getReason()
+                        );
+
+                        dto.setStatus(
+                                leave.getStatus()
+                        );
+
+                        dto.setManagerRemarks(
+                                leave.getManagerRemarks()
+                        );
+
+                        return dto;
+
+                    }).toList();
         }
     }

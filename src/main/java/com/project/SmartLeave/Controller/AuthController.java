@@ -5,7 +5,8 @@ import com.project.SmartLeave.Service.AuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 import com.project.SmartLeave.dto.LoginRequest;
-
+import com.project.SmartLeave.dto.LoginResponse;
+@CrossOrigin(origins = "*")
 @Tag(name = "Authentication APIs")
 @RestController
 @RequestMapping("/auth")
@@ -25,7 +26,7 @@ public class AuthController {
         return authService.register(request);
     }
     @PostMapping("/login")
-    public String login(
+    public LoginResponse login(
             @RequestBody LoginRequest request){
 
         return authService.login(request);

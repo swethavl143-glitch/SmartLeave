@@ -8,6 +8,7 @@ import com.project.SmartLeave.Repository.UserRepository;
 import com.project.SmartLeave.Service.EmailService;
 import com.project.SmartLeave.Service.LeaveService;
 import com.project.SmartLeave.dto.ApplyLeaveRequest;
+import com.project.SmartLeave.dto.DashboardStatsResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -146,5 +147,42 @@ public class LeaveServiceImpl
                         employee,
                         status,
                         pageable);
+    }
+    @Override
+    public DashboardStatsResponse getDashboardStats(
+            String email) {
+
+        User employee =
+                userRepository.findByEmail(email)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "User not found"));
+
+        DashboardStatsResponse response =
+                new DashboardStatsResponse();
+
+        response.setTotalLeaves(
+                leaveRequestRepository
+                        .countByEmployee(employee));
+
+        response.setPendingLeaves(
+                leaveRequestRepository
+                        .countByEmployeeAndStatus(
+                                employee,
+                                LeaveStatus.PENDING));
+
+        response.setApprovedLeaves(
+                leaveRequestRepository
+                        .countByEmployeeAndStatus(
+                                employee,
+                                LeaveStatus.APPROVED));
+
+        response.setRejectedLeaves(
+                leaveRequestRepository
+                        .countByEmployeeAndStatus(
+                                employee,
+                                LeaveStatus.REJECTED));
+
+        return response;
     }
 }

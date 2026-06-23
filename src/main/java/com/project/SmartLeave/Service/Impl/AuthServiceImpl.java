@@ -3,6 +3,7 @@ import com.project.SmartLeave.Entity.LeaveBalance;
 import com.project.SmartLeave.Repository.LeaveBalanceRepository;
 import com.project.SmartLeave.Security.JwtService;
 import com.project.SmartLeave.dto.LoginRequest;
+import com.project.SmartLeave.dto.LoginResponse;
 import com.project.SmartLeave.dto.RegisterRequest;
 import com.project.SmartLeave.Entity.User;
 import com.project.SmartLeave.Repository.UserRepository;
@@ -61,14 +62,14 @@ public class AuthServiceImpl implements AuthService {
         return "User Registered Successfully";
     }
     @Override
-    public String login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
 
         User user = userRepository
                 .findByEmail(request.getEmail())
                 .orElse(null);
 
-        if(user == null){
-            return "User not found";
+        if (user == null) {
+            throw new RuntimeException("User not found");
         }
 
         boolean matches =
@@ -77,8 +78,8 @@ public class AuthServiceImpl implements AuthService {
                         user.getPassword()
                 );
 
-        if(!matches){
-            return "Invalid Password";
+        if (!matches) {
+            throw new RuntimeException("Invalid Password");
         }
 
         String token =
@@ -86,6 +87,9 @@ public class AuthServiceImpl implements AuthService {
                         user.getEmail()
                 );
 
-        return token;
+        return new LoginResponse(
+                token,
+                user.getRole().name()
+        );
     }
 }

@@ -1,5 +1,6 @@
 package com.project.SmartLeave.Controller;
 import com.project.SmartLeave.Entity.LeaveStatus;
+import com.project.SmartLeave.dto.DashboardStatsResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 import java.util.List;
-
+@CrossOrigin(origins = "*")
 @Tag(name = "Leave Management APIs")
 @RestController
 @RequestMapping("/leave")
@@ -25,19 +26,6 @@ public class LeaveController {
             LeaveService leaveService) {
 
         this.leaveService = leaveService;
-    }
-
-    @PostMapping("/apply")
-    public String applyLeave(
-            @Valid @RequestBody ApplyLeaveRequest request,
-            Authentication authentication) {
-
-        String email =
-                authentication.getName();
-
-        return leaveService.applyLeave(
-                request,
-                email);
     }
     @GetMapping("/my-leaves")
     public Page<LeaveRequest> getMyLeaves(
@@ -70,6 +58,22 @@ public class LeaveController {
 
         return leaveService.cancelLeave(
                 id,
+                authentication.getName());
+    }
+    @GetMapping("/dashboard-stats")
+    public DashboardStatsResponse getDashboardStats(
+            Authentication authentication) {
+
+        return leaveService.getDashboardStats(
+                authentication.getName());
+    }
+    @PostMapping("/apply")
+    public String applyLeave(
+            @Valid @RequestBody ApplyLeaveRequest request,
+            Authentication authentication) {
+
+        return leaveService.applyLeave(
+                request,
                 authentication.getName());
     }
 }

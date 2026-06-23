@@ -38,7 +38,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Allow Swagger endpoints without JWT
         if (path.startsWith("/swagger-ui")
-                || path.startsWith("/v3/api-docs")) {
+                || path.startsWith("/v3/api-docs")
+                || path.equals("/auth/login")
+                || path.equals("/auth/register")) {
 
             filterChain.doFilter(request, response);
             return;

@@ -1,12 +1,13 @@
 package com.project.SmartLeave.Controller;
-
 import com.project.SmartLeave.Entity.LeaveRequest;
 import com.project.SmartLeave.Service.ManagerService;
 import com.project.SmartLeave.dto.ManagerRemarkRequest;
+import com.project.SmartLeave.dto.PendingLeaveResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/manager")
 public class ManagerController {
@@ -19,10 +20,11 @@ public class ManagerController {
     }
 
     @GetMapping("/pending")
-    public List<LeaveRequest> getPendingLeaves() {
+    public List<PendingLeaveResponse> getPendingLeaves() {
 
         return managerService.getPendingLeaves();
     }
+
     @PutMapping("/approve/{id}")
     public String approveLeave(
             @PathVariable Long id,
@@ -32,6 +34,7 @@ public class ManagerController {
                 id,
                 request.getRemarks());
     }
+
     @PutMapping("/reject/{id}")
     public String rejectLeave(
             @PathVariable Long id,
@@ -40,5 +43,10 @@ public class ManagerController {
         return managerService.rejectLeave(
                 id,
                 request.getRemarks());
+    }
+    @GetMapping("/history")
+    public List<PendingLeaveResponse> getHistory() {
+
+        return managerService.getHistory();
     }
 }

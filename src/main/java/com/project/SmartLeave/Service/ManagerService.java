@@ -1,14 +1,17 @@
 package com.project.SmartLeave.Service;
 
 import com.project.SmartLeave.Entity.LeaveRequest;
+import com.project.SmartLeave.dto.PendingLeaveResponse;
 
 import java.util.List;
 
 public interface ManagerService {
 
-    List<LeaveRequest> getPendingLeaves();
-    String approveLeave(Long leaveId,
-                        String remarks);
-    String rejectLeave(Long leaveId,
-                        String remarks);
+    List<PendingLeaveResponse> getPendingLeaves();
+
+    String approveLeave(Long id, String remarks);
+
+    String rejectLeave(Long id, String remarks);
+
+    List<PendingLeaveResponse> getHistory();
 }

@@ -3,6 +3,7 @@ package com.project.SmartLeave.Service;
 import com.project.SmartLeave.Entity.LeaveRequest;
 import com.project.SmartLeave.Entity.LeaveStatus;
 import com.project.SmartLeave.dto.ApplyLeaveRequest;
+import com.project.SmartLeave.dto.DashboardStatsResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -24,5 +25,7 @@ public interface LeaveService {
             LeaveStatus status,
             int page,
             int size);
+    DashboardStatsResponse getDashboardStats(
+            String email);
 
 }

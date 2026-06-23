@@ -23,4 +23,12 @@ public interface LeaveRequestRepository
             User employee,
             LeaveStatus status,
             Pageable pageable);
+    long countByEmployee(User employee);
+
+    long countByEmployeeAndStatus(
+            User employee,
+            LeaveStatus status);
+    List<LeaveRequest> findByStatusIn(
+            List<LeaveStatus> statuses
+    );
 }
