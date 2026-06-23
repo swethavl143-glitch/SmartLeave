@@ -47,7 +47,7 @@ public class SecurityConfig {
                                 "/swagger-ui.html"
                         ).permitAll()
 
-                        .requestMatchers(t
+                        .requestMatchers(
                                 "/auth/register",
                                 "/auth/login"
 
