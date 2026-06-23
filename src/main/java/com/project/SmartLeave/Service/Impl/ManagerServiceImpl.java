@@ -8,6 +8,9 @@ import com.project.SmartLeave.Repository.LeaveRequestRepository;
 import com.project.SmartLeave.Service.EmailService;
 import com.project.SmartLeave.Service.ManagerService;
 import com.project.SmartLeave.dto.PendingLeaveResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -200,54 +203,51 @@ import java.util.List;
             return "Leave Rejected Successfully";
         }
         @Override
-        public List<PendingLeaveResponse> getHistory() {
+        public Page<PendingLeaveResponse> getHistory(
+                int page,
+                int size) {
 
-            List<LeaveRequest> leaves =
+            Pageable pageable =
+                    PageRequest.of(page, size);
+
+            Page<LeaveRequest> leaves =
                     leaveRequestRepository.findByStatusIn(
                             List.of(
                                     LeaveStatus.APPROVED,
                                     LeaveStatus.REJECTED
-                            )
+                            ),
+                            pageable
                     );
 
-            return leaves.stream()
-                    .map(leave -> {
+            return leaves.map(leave -> {
 
-                        PendingLeaveResponse dto =
-                                new PendingLeaveResponse();
+                PendingLeaveResponse dto =
+                        new PendingLeaveResponse();
 
-                        dto.setId(leave.getId());
+                dto.setId(leave.getId());
+                dto.setEmployeeName(
+                        leave.getEmployee().getName()
+                );
+                dto.setLeaveType(
+                        leave.getLeaveType()
+                );
+                dto.setStartDate(
+                        leave.getStartDate()
+                );
+                dto.setEndDate(
+                        leave.getEndDate()
+                );
+                dto.setReason(
+                        leave.getReason()
+                );
+                dto.setStatus(
+                        leave.getStatus()
+                );
+                dto.setManagerRemarks(
+                        leave.getManagerRemarks()
+                );
 
-                        dto.setEmployeeName(
-                                leave.getEmployee().getName()
-                        );
-
-                        dto.setLeaveType(
-                                leave.getLeaveType()
-                        );
-
-                        dto.setStartDate(
-                                leave.getStartDate()
-                        );
-
-                        dto.setEndDate(
-                                leave.getEndDate()
-                        );
-
-                        dto.setReason(
-                                leave.getReason()
-                        );
-
-                        dto.setStatus(
-                                leave.getStatus()
-                        );
-
-                        dto.setManagerRemarks(
-                                leave.getManagerRemarks()
-                        );
-
-                        return dto;
-
-                    }).toList();
+                return dto;
+            });
         }
     }

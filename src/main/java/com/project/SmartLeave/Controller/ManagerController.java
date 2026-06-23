@@ -3,6 +3,7 @@ import com.project.SmartLeave.Entity.LeaveRequest;
 import com.project.SmartLeave.Service.ManagerService;
 import com.project.SmartLeave.dto.ManagerRemarkRequest;
 import com.project.SmartLeave.dto.PendingLeaveResponse;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,8 +46,13 @@ public class ManagerController {
                 request.getRemarks());
     }
     @GetMapping("/history")
-    public List<PendingLeaveResponse> getHistory() {
+    public Page<PendingLeaveResponse> getHistory(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
 
-        return managerService.getHistory();
+        return managerService.getHistory(
+                page,
+                size
+        );
     }
 }

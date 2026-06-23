@@ -31,4 +31,8 @@ public interface LeaveRequestRepository
     List<LeaveRequest> findByStatusIn(
             List<LeaveStatus> statuses
     );
+    Page<LeaveRequest> findByStatusIn(
+            List<LeaveStatus> statuses,
+            Pageable pageable
+    );
 }

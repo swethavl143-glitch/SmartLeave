@@ -27,7 +27,7 @@ public class LeaveController {
 
         this.leaveService = leaveService;
     }
-    @GetMapping("/my-leaves")
+    @GetMapping("/myleaves")
     public Page<LeaveRequest> getMyLeaves(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,

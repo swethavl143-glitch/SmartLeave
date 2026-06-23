@@ -21,7 +21,7 @@ public class LeaveBalanceController {
         this.leaveBalanceService = leaveBalanceService;
     }
 
-    @GetMapping("/my-balance")
+    @GetMapping("/balance")
     public ResponseEntity<LeaveBalance> getMyBalance(
             Authentication authentication) {
 
